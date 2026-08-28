@@ -24,7 +24,7 @@ module cla64_flat(
   // a real signal in the final circuit, it just controls how many times
   // the loop body is elaborated.
   // ---------------------------------------------------------------------
-  genvar i;
+  genvar i; 
   generate
     for (i = 0; i < 64; i = i + 1) begin : gen_pg
       xor #(2) (p[i], a[i], b[i]);
@@ -61,11 +61,27 @@ module cla64_flat(
   //
   // TODO: paste your verified assign statements for c[1] through c[64] here.
 
+  assign #(2) c[1]  = g[0]  | (p[0] & cin);
+  assign #(2) c[2]  = g[1]  | (p[1] & g[0])  | (p[1] & p[0] & cin);
+  assign #(2) c[3]  = g[2]  | (p[2] & g[1])  | (p[2] & p[1] & g[0])  | (p[2] & p[1] & p[0] & cin);
+  assign #(2) c[4]  = g[3]  | (p[3] & g[2])  | (p[3] & p[2] & g[1])  | (p[3] & p[2] & p[1] & g[0])  | (p[3] & p[2] & p[1] & p[0] & cin);
+  assign #(2) c[5]  = g[4]  | (p[4] & g[3])  | (p[4] & p[3] & g[2])  | (p[4] & p[3] & p[2] & g[1])  | (p[4] & p[3] & p[2] & p[1] & g[0])  | (p[4] & p[3] & p[2] & p[1] & p[0] & cin);
+  assign #(2) c[6]  = g[5]  | (p[5] & g[4])  | (p[5] & p[4] & g[3])  | (p[5] & p[4] & p[3] & g[2])  | (p[5] & p[4] & p[3] & p[2] & g[1])  | (p[5] & p[4] & p[3] & p[2] & p[1] & g[0])  | (p[5] & p[4] & p[3] & p[2] & p[1] & p[0] & cin);
+  assign #(2) c[7]  = g[6]  | (p[6] & g[5])  | (p[6] & p[5] & g[4])  | (p[6] & p[5] & p[4] & g[3])  | (p[6] & p[5] & p[4] & p[3] & g[2])  | (p[6] & p[5] & p[4] & p[3] & p[2] & g[1])  | (p[6] & p[5] & p[4] & p[3] & p[2] & p[1] & g[0])  | (p[6] & p[5] & p[4] & p[3] & p[2] & p[1] & p[0] & cin);
+  assign #(2) c[8]  = g[7]  | (p[7] & g[6])  | (p[7] & p[6] & g[5])  | (p[7] & p[6] & p[5] & g[4])  | (p[7] & p[6] & p[5] & p[4] & g[3])  | (p[7] & p[6] & p[5] & p[4] & p[3] & g[2])  | (p[7] & p[6] & p[5] & p[4] & p[3] & p[2] & g[1])  | (p[7] & p[6] & p[5] & p[4] & p[3] & p[2] & p[1] & g[0])  | (p[7] & p[6] & p[5] & p[4] & p[3] & p[2] & p[1] & p[0] & cin);
+
+
+genvar k;
+  generate
+    for (k = 9; k <= 64; k = k + 1) begin : gen_carries
+      assign #(2) c[k] = g[k-1] | (&p[k-1:0] & cin); 
+    end
+  endgenerate
+
   assign cout = c[64];
 
-  // ---------------------------------------------------------------------
-  // Step 3: sum bits
-  // ---------------------------------------------------------------------
-  // TODO: assign #(2) sum = p ^ {c[63:1], cin};
+  assign cout = c[64];
+
+  assign #(2) sum = p ^ {c[63:1], cin};
 
 endmodule
